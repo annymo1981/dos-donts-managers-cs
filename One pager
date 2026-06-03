@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Managers CS — Antes / Después</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A2540;--ink-soft:#33455c;--mp:#009EE3;--mp-dark:#0079AE;--mp-tint:#E8F6FD;
+    --yellow:#FFE600;--paper:#FFFFFF;--mist:#F4F7FA;--line:#E4EAF1;--muted:#7C8AA0;
+    --green:#16A672;--green-tint:#E9F8F1;--red:#E0524D;--red-tint:#FCEDEC;
+    --shadow:0 1px 2px rgba(10,37,64,.04), 0 8px 30px rgba(10,37,64,.06);--radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #EAF7FE 0%, rgba(234,247,254,0) 55%),
+      radial-gradient(900px 500px at -10% 0%, #FFFDEB 0%, rgba(255,253,235,0) 50%),
+      var(--mist);
+    color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:34px 26px 70px}
+
+  /* Header */
+  header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:26px}
+  .brand{display:flex;align-items:center;gap:13px}
+  .logo{width:46px;height:46px;border-radius:13px;flex:0 0 auto;background:linear-gradient(150deg,var(--mp),#23B5F0);display:grid;place-items:center;color:#fff;box-shadow:0 6px 16px rgba(0,158,227,.35);position:relative;overflow:hidden}
+  .logo svg{width:26px;height:26px}
+  .logo::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(255,255,255,.18))}
+  .brand .ttl{font-family:"Sora";font-weight:800;font-size:1.18rem;letter-spacing:-.02em;line-height:1.05}
+  .brand .sub{font-size:.78rem;color:var(--muted);font-weight:500;letter-spacing:.02em}
+  .meta{text-align:right;font-size:.74rem;color:var(--muted);font-weight:500}
+  .meta b{color:var(--ink);font-weight:600}
+
+  /* Tabs */
+  .tabs{display:inline-flex;background:#fff;border:1px solid var(--line);padding:5px;border-radius:999px;box-shadow:var(--shadow);gap:4px;margin-bottom:30px}
+  .tab{border:none;background:transparent;cursor:pointer;font-family:"Sora";font-weight:600;font-size:.86rem;color:var(--ink-soft);padding:10px 22px;border-radius:999px;display:flex;align-items:center;gap:8px;transition:.28s cubic-bezier(.4,0,.2,1);white-space:nowrap}
+  .tab .n{font-size:.66rem;font-weight:700;color:var(--muted);background:var(--mist);border-radius:6px;padding:2px 6px;transition:.28s}
+  .tab:hover{color:var(--ink)}
+  .tab.on{background:var(--ink);color:#fff;box-shadow:0 6px 18px rgba(10,37,64,.22)}
+  .tab.on .n{background:rgba(255,255,255,.18);color:#fff}
+
+  /* Views */
+  .view{display:none}
+  .view.on{display:block;animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .stagger>*{opacity:0;animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards}
+  .stagger>*:nth-child(1){animation-delay:.04s}
+  .stagger>*:nth-child(2){animation-delay:.12s}
+  .stagger>*:nth-child(3){animation-delay:.2s}
+  .stagger>*:nth-child(4){animation-delay:.28s}
+  .stagger>*:nth-child(5){animation-delay:.36s}
+
+  .lede{font-family:"Sora";font-weight:700;font-size:1.6rem;letter-spacing:-.025em;line-height:1.18;max-width:780px;margin-bottom:18px}
+  .lede .hl{color:var(--mp)}
+  .lede .ar{color:var(--muted);font-weight:500;display:inline-block;margin:0 4px;transform:translateY(1px)}
+
+  /* Comparison table (lámina 1) */
+  .ctable{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:20px}
+  .ctrow{display:grid;grid-template-columns:130px 1fr 1fr;align-items:stretch}
+  .ctrow+.ctrow{border-top:1px solid var(--line)}
+  .ccell{padding:14px 18px;font-size:.9rem;color:var(--ink-soft);line-height:1.4;display:flex;align-items:center}
+  .ccell.axis{font-family:"Sora";font-weight:700;font-size:.78rem;letter-spacing:.04em;color:var(--muted);background:var(--mist);text-transform:uppercase}
+  .ccell.before{border-left:1px solid var(--line);background:#FBFCFE}
+  .ccell.after{border-left:1px solid var(--line);background:linear-gradient(180deg,#fff,#FAFDFF)}
+  .ccell.after b{color:var(--ink);font-weight:600}
+  .ctrow.chead .ccell{padding:13px 18px}
+  .ctrow.chead .ccell.after{box-shadow:inset 0 3px 0 var(--mp)}
+  .tag{display:inline-flex;align-items:center;gap:7px;font-family:"Sora";font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .tag.b{background:var(--mist);color:var(--muted)}
+  .tag.a{background:var(--mp-tint);color:var(--mp-dark)}
+  .dot{width:7px;height:7px;border-radius:50%}
+  .dot.b{background:var(--muted)}.dot.a{background:var(--mp)}
+  @media(max-width:680px){
+    .ctrow{grid-template-columns:1fr 1fr}
+    .ccell.axis{grid-column:1/-1;padding:9px 18px;font-size:.72rem}
+    .ctrow.chead .ccell.axis{display:none}
+  }
+  .takeaway{font-size:.95rem;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-left:4px solid var(--yellow);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow)}
+  .takeaway b{color:var(--ink);font-weight:600}
+
+  /* Explanation (lámina 2) */
+  .why{background:#fff;border:1px solid var(--line);border-left:4px solid var(--yellow);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:18px;max-width:880px}
+  .why p{font-size:.95rem;color:var(--ink-soft)}
+  .why b{color:var(--ink);font-weight:600}
+  .usegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+  @media(max-width:760px){.usegrid{grid-template-columns:1fr}}
+  .usecard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px 18px 15px;box-shadow:var(--shadow);transition:.3s}
+  .usecard:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(10,37,64,.09);border-color:#CDE9F8}
+  .usecard .ic{width:34px;height:34px;border-radius:9px;background:var(--mp-tint);color:var(--mp-dark);display:grid;place-items:center;margin-bottom:11px}
+  .usecard .ic svg{width:18px;height:18px}
+  .usecard h4{font-family:"Sora";font-weight:700;font-size:.92rem;margin-bottom:5px}
+  .usecard p{font-size:.83rem;color:var(--ink-soft);line-height:1.42}
+  .usecard b{color:var(--ink);font-weight:600}
+
+  .sectlabel{font-family:"Sora";font-weight:700;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:6px 0 14px;display:flex;align-items:center;gap:10px}
+  .sectlabel::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  .dims{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:760px){.dims{grid-template-columns:1fr}}
+  .dim{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 16px 15px;text-align:left;cursor:pointer;box-shadow:var(--shadow);transition:.28s cubic-bezier(.4,0,.2,1);position:relative;font-family:inherit}
+  .dim:hover{transform:translateY(-3px);border-color:#BDE7F8;box-shadow:0 14px 32px rgba(0,158,227,.13)}
+  .dim.active{border-color:var(--mp);box-shadow:0 14px 32px rgba(0,158,227,.2);background:linear-gradient(180deg,#fff,#FAFDFF)}
+  .dim .num{font-family:"Sora";font-weight:800;font-size:.78rem;color:var(--mp);letter-spacing:.04em}
+  .dim h4{font-family:"Sora";font-weight:700;font-size:.98rem;letter-spacing:-.01em;margin:7px 0 6px;line-height:1.15}
+  .dim p{font-size:.8rem;color:var(--ink-soft);line-height:1.38}
+  .dim .cnt{margin-top:9px;font-size:.7rem;font-weight:700;font-family:"Sora";color:var(--mp-dark);background:var(--mp-tint);display:inline-block;padding:3px 9px;border-radius:999px}
+  .dim .chev{position:absolute;top:15px;right:14px;color:var(--muted);transition:.3s}
+  .dim.active .chev{transform:rotate(180deg);color:var(--mp)}
+  .dim .chev svg{width:15px;height:15px}
+
+  .panel{background:linear-gradient(180deg,#fff,#FAFDFF);border:1px solid #BDE7F8;border-radius:16px;box-shadow:0 12px 34px rgba(0,158,227,.12);margin-top:16px;overflow:hidden;max-height:0;opacity:0;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .35s,margin .3s,padding .3s}
+  .panel.show{max-height:1400px;opacity:1;padding:20px 22px 22px}
+  .panel-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+  .panel-head .badge{font-family:"Sora";font-weight:800;font-size:.7rem;color:#fff;background:var(--mp);padding:4px 9px;border-radius:7px;letter-spacing:.03em}
+  .panel-head h5{font-family:"Sora";font-weight:700;font-size:1.08rem;letter-spacing:-.01em}
+  .stmt{padding:14px 0;border-top:1px dashed var(--line)}
+  .stmt:first-of-type{border-top:none;padding-top:0}
+  .stmt h6{font-family:"Sora";font-weight:600;font-size:.93rem;color:var(--ink);line-height:1.35;margin-bottom:7px;display:flex;gap:8px;align-items:flex-start}
+  .stmt h6 .b{flex:0 0 auto;width:6px;height:6px;border-radius:50%;background:var(--mp);margin-top:8px}
+  .stmt .ex{display:flex;gap:8px;align-items:flex-start;font-size:.86rem;color:var(--ink-soft);line-height:1.42;padding-left:14px}
+  .stmt .ex svg{flex:0 0 auto;width:15px;height:15px;color:var(--green);margin-top:2px}
+  .stmt .ex .lbl{font-weight:700;color:var(--green);margin-right:3px}
+  .stmt .noex{font-size:.8rem;color:var(--muted);font-style:italic;padding-left:14px}
+  .bridge{font-family:"Sora";font-weight:700;font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;color:var(--mp-dark);background:var(--mp-tint);padding:2px 7px;border-radius:6px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+
+  .hint{font-size:.8rem;color:var(--muted);margin-top:14px;display:flex;align-items:center;gap:7px}
+  .hint svg{width:15px;height:15px;color:var(--mp)}
+
+  footer{margin-top:38px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.74rem;color:var(--muted)}
+  footer b{color:var(--ink-soft);font-weight:600}
+
+  @media print{
+    body{background:#fff}
+    .tabs,.hint,.chev{display:none}
+    .view{display:block!important;animation:none;page-break-before:always}
+    .view:first-of-type{page-break-before:auto}
+    .panel{max-height:none!important;opacity:1!important;padding:18px!important}
+    .stagger>*{opacity:1!important;animation:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 13.5c2.2-2.6 4.4-2.6 6.6 0 2.2 2.6 4.4 2.6 6.6 0M4 9.5c2.2 2.6 4.4 2.6 6.6 0 2.2-2.6 4.4-2.6 6.6 0" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="ttl">Do's &amp; Don'ts — Managers CS</div>
+        <div class="sub">Customer Service · Mercado Pago</div>
+      </div>
+    </div>
+    <div class="meta">
+      <div><b>Marco de gestión</b></div>
+      <div>TO BE · Managers CS</div>
+    </div>
+  </header>
+
+  <!-- ===================== LÁMINA ÚNICA ===================== -->
+  <section class="view on" id="explica">
+    <div class="stagger">
+      <h2 class="lede">El marco <span class="hl">TO BE</span>: 3 dimensiones de gestión, 12 statements.</h2>
+
+      <div class="why">
+        <p><b>Qué es.</b> Un único marco para todos los managers de CS, organizado en <b>Gestión de Operación, de Producto y de Equipo</b>. Reemplaza los DO's &amp; DON'Ts de "Equipo de alto impacto".</p>
+      </div>
+
+      <div class="usegrid">
+        <div class="usecard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l2.5 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <h4>Por qué cambió</h4>
+          <p>Las listas de conductas eran muchas y sueltas. Difícil de bajar a la práctica y de usar para feedback.</p>
+        </div>
+        <div class="usecard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <h4>Cómo se lee</h4>
+          <p>Cada dimensión agrupa <b>statements</b>; cada statement trae un <b>ejemplo</b> de aplicación (o "no requiere ejemplo").</p>
+        </div>
+        <div class="usecard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h4>Para qué sirve</h4>
+          <p>Vara común para alinear expectativas, estructurar 1:1 y feedback, y orientar el desarrollo.</p>
+        </div>
+      </div>
+
+      <div class="sectlabel">Las 3 dimensiones · tocá para ver los statements</div>
+      <div class="dims" id="dims"></div>
+
+      <div class="panel" id="panel"></div>
+      <div class="hint" id="hint">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.5.4.8 1 .8 1.6h5.4c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Seleccioná una dimensión para ver sus statements y ejemplos.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Fuente: <b>TO BE</b> · Marco de gestión de Managers</div>
+    <div>Mercado Pago · Customer Service</div>
+  </footer>
+
+</div>
+
+<script>
+  /* Datos — solo de la imagen "TO BE" */
+  const DIMS=[
+    {n:'01',name:'Gestión de Operación',
+     desc:'Actitud de dueño, foco en números, sensibilidad operativa y uso responsable de IA.',
+     items:[
+       {s:'Tener actitud de dueño: tomar decisiones conscientes ponderando trade-offs, empujando la transformación operativa, del negocio y cultural.',
+        e:'No convivir con números en rojo (basics, goals): armar planes de gestión y transformación, liderando los cambios necesarios.'},
+       {s:'Evaluar el impacto de las acciones en base a números, entendiendo los trade-offs y el foco; elevar la vara y mostrar el camino (exigir y acompañar).',
+        e:'Modificaciones de producto que impactan el NPS pero que entendemos y organizamos para que la experiencia esté siempre cubierta.'},
+       {s:'Sensibilidad operativa: conocer producto, herramientas y la implicancia de los cambios operativos en los resultados y la experiencia del usuario.',
+        e:'Conocer los procesos, flujos y productos que involucran la gestión de mis equipos.'},
+       {s:'Uso responsable de IA: declarar su uso, validar resultados con datos antes de decidir, proteger la información sensible y medir su impacto en calidad y eficiencia.',
+        e:null}
+     ]},
+    {n:'02',name:'Gestión de Producto',
+     desc:'Dos velocidades, sano inconformismo, usuario al frente y problemas en profundidad.',
+     items:[
+       {s:'Moverse en dos velocidades: actuar rápido para resolver el "incendio" y pensar a largo plazo para prevenirlo (el bombero vs. el guardián de experiencia).',
+        e:'Resolver en WR lo urgente y, después, buscar soluciones estructurales.',bridge:'Operación / Producto'},
+       {s:'Stay Hungry: no conformarse con el status quo, desafiarse a más y transmitirlo al equipo. Sano inconformismo constante.',
+        e:'No convivir con lo que "funciona de toda la vida"; cuestionar desde la objetividad y los objetivos del equipo/usuario.',bridge:'Operación / Producto'},
+       {s:'Poner la experiencia del usuario y la estrategia del negocio al frente de cualquier decisión.',
+        e:null},
+       {s:'Entender (y poder explicar) los problemas en profundidad: causas, impactos y cursos de acción, evaluando factibilidad y priorizando.',
+        e:'Poder explicar los KPIs desviados del equipo, con su motivo y plan de reversión si aplica.'}
+     ]},
+    {n:'03',name:'Gestión de Equipo',
+     desc:'Desarrollo de talento, foco según el momento, inspirar y colaboración cross.',
+     items:[
+       {s:'Desarrollar el talento a cargo: planes de sucesión, desarrollo y cierre de ciclos a tiempo (sin demorar decisiones).',
+        e:'Si alguien baja en performance, actuar rápido, no dilatar charlas y concretar acciones en plazos razonables: cada mes desalineado impacta a todo el equipo.'},
+       {s:'Entender dónde se agrega más valor en cada momento: diseñar, planificar, crear o ejecutar. Visión de largo plazo y foco en transformar.',
+        e:'Ser dúctil en el rol; participar activamente del diseño de la experiencia poniendo al usuario en el centro.'},
+       {s:'Inspirar con las acciones: "ser lo que quiero ver". El equipo es la caja de resonancia del líder.',
+        e:null},
+       {s:'Generar trabajo colaborativo cross (Centro / Equipo / BU): ser la voz de CS en los squads, coordinar, informar y validar; liderazgo por influencia con stakeholders clave.',
+        e:'Como referente cross en un track de producto, asegurar que los equipos impactados tengan info y estén preparados; dar visibilidad a gerentes y hacer follow-up del feedback de CS.'}
+     ]}
+  ];
+
+  const dimsEl=document.getElementById('dims');
+  const panel=document.getElementById('panel');
+  const hintEl=document.getElementById('hint');
+  let openIdx=-1;
+  const chev='<span class="chev"><svg viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+  const eyeDo='<svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4.5 4.5L19 7" stroke="#16A672" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  DIMS.forEach((d,i)=>{
+    const b=document.createElement('button');
+    b.className='dim';
+    b.innerHTML=`<span class="num">${d.n}</span>${chev}<h4>${d.name}</h4><p>${d.desc}</p><span class="cnt">${d.items.length} statements</span>`;
+    b.addEventListener('click',()=>select(i));
+    dimsEl.appendChild(b);
+  });
+
+  function select(i){
+    const cards=dimsEl.querySelectorAll('.dim');
+    if(openIdx===i){
+      cards[i].classList.remove('active');panel.classList.remove('show');openIdx=-1;hintEl.style.display='flex';
+      setTimeout(()=>{if(openIdx===-1)panel.innerHTML='';},500);return;
+    }
+    cards.forEach(c=>c.classList.remove('active'));cards[i].classList.add('active');
+    openIdx=i;hintEl.style.display='none';
+    const d=DIMS[i];
+    const rows=d.items.map(it=>`
+      <div class="stmt">
+        <h6><span class="b"></span><span>${it.s}${it.bridge?`<span class="bridge">${it.bridge}</span>`:''}</span></h6>
+        ${it.e
+          ? `<div class="ex">${eyeDo}<span><span class="lbl">Ej:</span>${it.e}</span></div>`
+          : `<div class="noex">No requiere ejemplo</div>`}
+      </div>`).join('');
+    panel.innerHTML=`<div class="panel-head"><span class="badge">${d.n}</span><h5>${d.name}</h5></div>${rows}`;
+    void panel.offsetWidth;panel.classList.add('show');
+    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+</script>
+</body>
+</html>
